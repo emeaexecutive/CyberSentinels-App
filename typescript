@@ -1,0 +1,15 @@
+export default function HomePage() {
+  return (
+    <main className="min-h-screen bg-black text-white p-10">
+      <h1 className="text-5xl font-semibold">CYBER SENTINELS</h1>
+      <p className="mt-6 max-w-2xl text-lg text-slate-300">
+        Trust infrastructure for humans, AI agents, and digital systems.
+      </p>
+      <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <a href="/verify-human" className="rounded-2xl border border-white/10 p-6">Verify Human</a>
+        <a href="/trust-graph" className="rounded-2xl border border-white/10 p-6">Trust Graph</a>
+        <a href="/agent-passport" className="rounded-2xl border border-white/10 p-6">Agent Passport</a>
+      </div>
+    </main>
+  )
+}
