@@ -1,0 +1,73 @@
+const stats = [
+  ['Active Trust Sessions', '1,284'],
+  ['Verified Humans', '92.8%'],
+  ['Agent Passports', '316'],
+  ['Threats Blocked', '47']
+]
+
+const alerts = [
+  'Executive voice clone risk blocked',
+  'Candidate verification escalated',
+  'Agent permission drift flagged'
+]
+
+export default function DashboardPage() {
+  return (
+    <main className="min-h-screen bg-[#05070b] text-white">
+      <section className="mx-auto max-w-7xl px-6 py-10">
+        <div className="mb-8">
+          <div className="text-xs uppercase tracking-[0.35em] text-emerald-300">Command Center</div>
+          <h1 className="mt-3 text-5xl font-semibold tracking-tight">Cyber Sentinels Dashboard</h1>
+          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
+            Monitor verified humans, AI agents, trust scores, threat alerts, and audit-ready identity decisions.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-4">
+          {stats.map(([label, value]) => (
+            <div key={label} className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+              <div className="text-xs uppercase tracking-[0.24em] text-slate-500">{label}</div>
+              <div className="mt-4 text-3xl font-semibold">{value}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-6">
+            <div className="text-xs uppercase tracking-[0.28em] text-cyan-300">Trust Posture</div>
+            <h2 className="mt-3 text-3xl font-semibold">Composite Trust Score: 91</h2>
+            <div className="mt-6 space-y-4">
+              {[
+                ['Human identity integrity', '88%'],
+                ['Agent governance posture', '72%'],
+                ['Auditability coverage', '94%']
+              ].map(([label, score]) => (
+                <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-300">{label}</span>
+                    <span>{score}</span>
+                  </div>
+                  <div className="mt-3 h-2 rounded-full bg-white/10">
+                    <div className="h-2 rounded-full bg-emerald-400" style={{ width: score }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-6">
+            <div className="text-xs uppercase tracking-[0.28em] text-red-300">Threat Alerts</div>
+            <h2 className="mt-3 text-3xl font-semibold">Live Risk</h2>
+            <div className="mt-6 space-y-3">
+              {alerts.map((alert) => (
+                <div key={alert} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm text-slate-300">
+                  {alert}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
