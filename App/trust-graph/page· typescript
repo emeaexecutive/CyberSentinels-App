@@ -1,0 +1,74 @@
+const nodes = [
+  ['Verified Humans', '1,842'],
+  ['AI Agents', '316'],
+  ['High-Risk Sessions', '94'],
+  ['Critical Approvals', '128']
+]
+
+const investigations = [
+  'Synthetic executive impersonation cluster detected',
+  'Shared device fingerprint across contractor identities',
+  'Third-party agent permission drift across finance workflows',
+  'Repeated geo-anomaly across privileged admin sessions'
+]
+
+export default function TrustGraphPage() {
+  return (
+    <main className="min-h-screen bg-[#05070b] text-white">
+      <section className="mx-auto max-w-7xl px-6 py-10">
+        <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
+          <div className="text-xs uppercase tracking-[0.35em] text-emerald-300">Trust Graph</div>
+          <h1 className="mt-3 text-5xl font-semibold tracking-tight">Trust is not a score. Trust is a graph.</h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Map relationships between verified humans, AI agents, approvals, sessions and threat events to reveal explainable trust paths.
+          </p>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-4">
+          {nodes.map(([label, value]) => (
+            <div key={label} className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+              <div className="text-xs uppercase tracking-[0.24em] text-slate-500">{label}</div>
+              <div className="mt-4 text-3xl font-semibold">{value}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-6">
+            <div className="text-xs uppercase tracking-[0.28em] text-cyan-300">Live Topology</div>
+            <h2 className="mt-3 text-3xl font-semibold">Entity Relationship Graph</h2>
+            <div className="relative mt-8 min-h-[420px] rounded-[28px] border border-white/10 bg-black/25">
+              <div className="absolute left-1/2 top-1/2 flex h-32 w-32 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-emerald-400/30 bg-emerald-500/10 text-center text-sm">
+                Verified<br />Human
+              </div>
+              <div className="absolute left-[12%] top-[18%] flex h-28 w-28 items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-500/10 text-center text-sm">
+                AI<br />Agent
+              </div>
+              <div className="absolute right-[12%] top-[18%] flex h-28 w-28 items-center justify-center rounded-full border border-violet-400/30 bg-violet-500/10 text-center text-sm">
+                Critical<br />Approval
+              </div>
+              <div className="absolute bottom-[14%] left-[18%] flex h-28 w-28 items-center justify-center rounded-full border border-orange-400/30 bg-orange-500/10 text-center text-sm">
+                Session<br />Risk
+              </div>
+              <div className="absolute bottom-[14%] right-[18%] flex h-28 w-28 items-center justify-center rounded-full border border-red-400/30 bg-red-500/10 text-center text-sm">
+                Threat<br />Alert
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-6">
+            <div className="text-xs uppercase tracking-[0.28em] text-red-300">Investigations</div>
+            <h2 className="mt-3 text-3xl font-semibold">Anomaly Clusters</h2>
+            <div className="mt-6 space-y-3">
+              {investigations.map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm leading-6 text-slate-300">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
