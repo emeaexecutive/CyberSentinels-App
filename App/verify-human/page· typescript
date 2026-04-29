@@ -1,0 +1,121 @@
+'use client'
+
+import { useState } from 'react'
+import { IDKitWidget, VerificationLevel } from '@worldcoin/idkit'
+
+type VerificationState = 'idle' | 'pending' | 'verified' | 'failed'
+
+export default function VerifyHumanPage() {
+  const [status, setStatus] = useState<VerificationState>('idle')
+  const [message, setMessage] = useState('Ready to verify proof-of-human identity.')
+  const [trustScore, setTrustScore] = useState<number | null>(null)
+
+  const appId = process.env.NEXT_PUBLIC_WORLD_APP_ID
+
+  async function handleProof(proof: any) {
+    setStatus('pending')
+    setMessage('Verifying proof with Cyber Sentinels trust engine...')
+
+    try {
+      const response = await fetch('/api/world-id/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...proof,
+          action: 'verify-human',
+          signal: 'cyber-sentinels-human-verification'
+        })
+      })
+
+      const result = await response.json()
+
+      if (!response.ok || !result.success) {
+        setStatus('failed')
+        setMessage(result.error || 'Verification failed.')
+        return
+      }
+
+      setStatus('verified')
+      setTrustScore(result.trust_score)
+      setMessage('Human verified. Trust score created and audit log stored.')
+    } catch (error) {
+      setStatus('failed')
+      setMessage('Verification request failed. Check API and environment variables.')
+    }
+  }
+
+  return (
+    <main className="min-h-screen bg-[#05070b] text-white">
+      <section className="mx-auto max-w-5xl px-6 py-20">
+        <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-8 shadow-2xl">
+          <div className="text-xs uppercase tracking-[0.35em] text-emerald-300">
+            Verified Human
+          </div>
+          <h1 className="mt-4 text-5xl font-semibold tracking-tight">
+            Prove human identity before permission is granted.
+          </h1>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
+            World ID provides the proof-of-human signal. Cyber Sentinels adds the trust score, audit trail, nullifier replay protection, and enterprise decision layer.
+          </p>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-[1fr_0.8fr]">
+            <div className="rounded-[28px] border border-white/10 bg-black/25 p-6">
+              <div className="text-sm uppercase tracking-[0.25em] text-slate-500">
+                Verification status
+              </div>
+              <div className="mt-4 text-3xl font-semibold capitalize">{status}</div>
+              <p className="mt-4 text-slate-300">{message}</p>
+
+              {trustScore !== null && (
+                <div className="mt-6 rounded-3xl border border-emerald-400/20 bg-emerald-500/10 p-5">
+                  <div className="text-sm uppercase tracking-[0.25em] text-emerald-200">
+                    Cyber Sentinels Trust Score
+                  </div>
+                  <div className="mt-3 text-6xl font-semibold text-emerald-300">{trustScore}</div>
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-[28px] border border-white/10 bg-black/25 p-6">
+              <div className="text-sm uppercase tracking-[0.25em] text-cyan-300">
+                Proof-of-human
+              </div>
+              <p className="mt-4 text-sm leading-7 text-slate-300">
+                Click the button below to start World ID verification. Keep production keys server-side and only expose public app identifiers.
+              </p>
+
+              <div className="mt-8">
+                {appId ? (
+                  <IDKitWidget
+                    app_id={appId as `app_${string}`}
+                    action="verify-human"
+                    verification_level={VerificationLevel.Device}
+                    handleVerify={handleProof}
+                    onSuccess={() => {
+                      setMessage('World ID proof received. Finalising Cyber Sentinels verification...')
+                    }}
+                  >
+                    {({ open }) => (
+                      <button
+                        onClick={open}
+                        className="w-full rounded-full bg-white px-6 py-4 font-semibold text-black transition hover:scale-[1.02]"
+                      >
+                        Verify with World ID
+                      </button>
+                    )}
+                  </IDKitWidget>
+                ) : (
+                  <div className="rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-200">
+                    Missing NEXT_PUBLIC_WORLD_APP_ID environment variable.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
