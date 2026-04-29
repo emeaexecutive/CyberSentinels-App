@@ -1,0 +1,149 @@
+# CYBER SENTINELS App
+
+Trust infrastructure for humans, AI agents, and digital systems.
+
+This is the Next.js / Vercel product app for CYBER SENTINELS.
+
+## Core Routes
+
+```text
+/
+/dashboard
+/verify-human
+/trust-graph
+/agent-passport
+/api/health
+/api/audit
+/api/world-id/verify
+```
+
+## Tech Stack
+
+* Next.js 14 App Router
+* TypeScript
+* Tailwind CSS
+* Vercel
+* Postgres / Neon / Vercel Postgres
+* World ID proof-of-human integration
+
+## Folder Structure
+
+```text
+app/
+  api/
+    audit/
+      route.ts
+    health/
+      route.ts
+    world-id/
+      verify/
+        route.ts
+  agent-passport/
+    page.tsx
+  dashboard/
+    page.tsx
+  trust-graph/
+    page.tsx
+  verify-human/
+    page.tsx
+  globals.css
+  layout.tsx
+  page.tsx
+
+lib/
+  db.ts
+  world-id.ts
+
+db/
+  schema.sql
+```
+
+## Environment Variables
+
+Create `.env.local` locally and add the same values in Vercel Project Settings.
+
+```env
+DATABASE_URL=postgresql://username:password@host:5432/cybersentinels
+WORLD_RP_ID=cybersentinels
+WORLD_SIGNING_KEY=your_signing_key_here
+NEXT_PUBLIC_WORLD_APP_ID=app_staging_xxxxx
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NODE_ENV=development
+```
+
+## Database Setup
+
+Run the SQL in:
+
+```text
+db/schema.sql
+```
+
+This creates:
+
+* `verified_humans`
+* `agent_passports`
+* `audit_logs`
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+## Production Build
+
+```bash
+npm run build
+npm run start
+```
+
+## Vercel Settings
+
+Use:
+
+```text
+Framework Preset: Next.js
+Install Command: npm install
+Build Command: npm run build
+Output Directory: leave blank
+```
+
+## World ID Integration
+
+World ID is used as the proof-of-human signal.
+
+Cyber Sentinels adds:
+
+* trust scoring
+* audit logging
+* nullifier replay protection
+* enterprise verification decisions
+* future device/session intelligence
+
+Verification route:
+
+```text
+POST /api/world-id/verify
+```
+
+## Security Notes
+
+* Keep `WORLD_SIGNING_KEY` server-side only.
+* Never expose database credentials in frontend code.
+* Store World ID nullifier hashes to prevent replay.
+* Use audit logs for every high-trust decision.
+* Add production-grade rate limiting before public launch.
+
+## Founder Positioning
+
+Cyber Sentinels is not just identity verification.
+
+It is trust infrastructure for a world where humans are no longer distinguishable from machines.
