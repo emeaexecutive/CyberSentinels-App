@@ -1,0 +1,62 @@
+import { NextResponse } from 'next/server'
+import { pool } from '@/lib/db'
+
+export async function GET() {
+  try {
+    const result = await pool.query(
+      `SELECT id, event_type, entity_type, entity_id, details, created_at
+       FROM audit_logs
+       ORDER BY created_at DESC
+       LIMIT 50`
+    )
+
+    return NextResponse.json({
+      success: true,
+      audit_logs: result.rows
+    })
+  } catch (error) {
+    console.error('Audit log fetch failed:', error)
+
+    return NextResponse.json(
+      { success: false, error: 'Unable to fetch audit logs' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+
+    const eventType = String(body.event_type || '')
+    const entityType = body.entity_type ? String(body.entity_type) : null
+    const entityId = body.entity_id ? String(body.entity_id) : null
+    const details = body.details || {}
+
+    if (!eventType) {
+      return NextResponse.json(
+        { success: false, error: 'event_type is required' },
+        { status: 400 }
+      )
+    }
+
+    const result = await pool.query(
+      `INSERT INTO audit_logs (event_type, entity_type, entity_id, details)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, event_type, entity_type, entity_id, details, created_at`,
+      [eventType, entityType, entityId, JSON.stringify(details)]
+    )
+
+    return NextResponse.json({
+      success: true,
+      audit_log: result.rows[0]
+    })
+  } catch (error) {
+    console.error('Audit log write failed:', error)
+
+    return NextResponse.json(
+      { success: false, error: 'Unable to create audit log' },
+      { status: 500 }
+    )
+  }
+}
