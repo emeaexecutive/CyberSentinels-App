@@ -1,0 +1,88 @@
+const permissions = [
+  ['Payments Approval Requests', 'Restricted'],
+  ['Vendor Invoice Routing', 'Enabled'],
+  ['Treasury Ledger Read Access', 'Read Only'],
+  ['External Communication', 'Blocked'],
+  ['Escalation Authority', 'Manager Approval Required']
+]
+
+const auditTrail = [
+  'Permission scope refreshed',
+  'Anomalous action prevented',
+  'Passport integrity verified',
+  'Compliance export generated'
+]
+
+export default function AgentPassportPage() {
+  return (
+    <main className="min-h-screen bg-[#05070b] text-white">
+      <section className="mx-auto max-w-7xl px-6 py-10">
+        <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
+          <div className="text-xs uppercase tracking-[0.35em] text-cyan-300">Agent Passport</div>
+          <h1 className="mt-3 text-5xl font-semibold tracking-tight">Every AI agent needs a passport.</h1>
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-300">
+            Verify origin, govern permissions, monitor actions, and create accountability before autonomous agents operate inside enterprise workflows.
+          </p>
+        </div>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="space-y-6">
+            <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-6">
+              <div className="text-xs uppercase tracking-[0.28em] text-emerald-300">Passport Summary</div>
+              <h2 className="mt-3 text-3xl font-semibold">Apex Finance Agent</h2>
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                {[
+                  ['Origin', 'Internal Treasury Automation'],
+                  ['Passport ID', 'CS-AGT-88421'],
+                  ['Owner', 'Finance Operations'],
+                  ['Policy Level', 'High Trust Controlled']
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
+                    <div className="text-xs uppercase tracking-[0.22em] text-slate-500">{label}</div>
+                    <div className="mt-2 font-medium">{value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-6">
+              <div className="text-xs uppercase tracking-[0.28em] text-violet-300">Permissions Matrix</div>
+              <h2 className="mt-3 text-3xl font-semibold">Allowed vs restricted actions</h2>
+              <div className="mt-6 space-y-3">
+                {permissions.map(([label, state]) => (
+                  <div key={label} className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/25 p-4 text-sm">
+                    <span className="text-slate-300">{label}</span>
+                    <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1">{state}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="rounded-[32px] border border-cyan-400/20 bg-cyan-500/10 p-6">
+              <div className="text-xs uppercase tracking-[0.28em] text-cyan-100">Agent Trust Score</div>
+              <div className="mt-3 text-6xl font-semibold">89</div>
+              <div className="mt-3 text-lg">Operational — Controlled Autonomy</div>
+              <p className="mt-4 text-sm leading-7 text-cyan-50/80">
+                Agent remains inside approved workflow boundaries. One anomaly event prevented this week with no unresolved escalation.
+              </p>
+            </div>
+
+            <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-6">
+              <div className="text-xs uppercase tracking-[0.28em] text-emerald-300">Audit Trail</div>
+              <h2 className="mt-3 text-3xl font-semibold">Traceable operating history</h2>
+              <div className="mt-6 space-y-3">
+                {auditTrail.map((item) => (
+                  <div key={item} className="rounded-2xl border border-white/10 bg-black/25 p-4 text-sm text-slate-300">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
