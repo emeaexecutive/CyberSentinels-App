@@ -1,0 +1,24 @@
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}'
+  ],
+  theme: {
+    extend: {
+      colors: {
+        sentinel: {
+          black: '#05070b',
+          panel: '#0b1018',
+          green: '#19c37d',
+          cyan: '#45c7ff',
+          muted: '#8c98aa'
+        }
+      }
+    }
+  },
+  plugins: []
+}
+
+export default config
