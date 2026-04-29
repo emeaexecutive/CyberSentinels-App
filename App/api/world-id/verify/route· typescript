@@ -1,0 +1,108 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { pool } from '@/lib/db'
+import {
+  calculateInitialTrustScore,
+  verifyWorldIdProof,
+  worldIdProofSchema
+} from '@/lib/world-id'
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const parsed = worldIdProofSchema.safeParse(body)
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid proof payload', details: parsed.error.flatten() },
+        { status: 400 }
+      )
+    }
+
+    const proofPayload = parsed.data
+
+    const existing = await pool.query(
+      'SELECT id FROM verified_humans WHERE world_nullifier_hash = $1 LIMIT 1',
+      [proofPayload.nullifier_hash]
+    )
+
+    if (existing.rowCount && existing.rowCount > 0) {
+      await pool.query(
+        `INSERT INTO audit_logs (event_type, entity_type, entity_id, details)
+         VALUES ($1, $2, $3, $4)`,
+        [
+          'world_id_replay_attempt_blocked',
+          'verified_human',
+          proofPayload.nullifier_hash,
+          JSON.stringify({ action: proofPayload.action })
+        ]
+      )
+
+      return NextResponse.json(
+        { success: false, error: 'This proof has already been used for this action.' },
+        { status: 409 }
+      )
+    }
+
+    const worldResult = await verifyWorldIdProof(proofPayload)
+
+    if (!worldResult.success) {
+      await pool.query(
+        `INSERT INTO audit_logs (event_type, entity_type, entity_id, details)
+         VALUES ($1, $2, $3, $4)`,
+        [
+          'world_id_verification_failed',
+          'verified_human',
+          proofPayload.nullifier_hash,
+          JSON.stringify(worldResult.result)
+        ]
+      )
+
+      return NextResponse.json(
+        { success: false, error: 'World ID verification failed', details: worldResult.result },
+        { status: 400 }
+      )
+    }
+
+    const trustScore = calculateInitialTrustScore({
+      worldVerified: true,
+      verificationLevel: proofPayload.verification_level
+    })
+
+    const inserted = await pool.query(
+      `INSERT INTO verified_humans
+       (world_nullifier_hash, trust_score, verification_status)
+       VALUES ($1, $2, $3)
+       RETURNING id, trust_score, verification_status, created_at`,
+      [proofPayload.nullifier_hash, trustScore, 'verified']
+    )
+
+    await pool.query(
+      `INSERT INTO audit_logs (event_type, entity_type, entity_id, details)
+       VALUES ($1, $2, $3, $4)`,
+      [
+        'world_id_verification_success',
+        'verified_human',
+        String(inserted.rows[0].id),
+        JSON.stringify({
+          action: proofPayload.action,
+          verification_level: proofPayload.verification_level,
+          trust_score: trustScore
+        })
+      ]
+    )
+
+    return NextResponse.json({
+      success: true,
+      verified: true,
+      trust_score: trustScore,
+      record: inserted.rows[0]
+    })
+  } catch (error) {
+    console.error('World ID verification error:', error)
+
+    return NextResponse.json(
+      { success: false, error: 'Internal verification error' },
+      { status: 500 }
+    )
+  }
+}
